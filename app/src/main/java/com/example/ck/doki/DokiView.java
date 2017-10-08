@@ -206,6 +206,9 @@ public class DokiView extends HorizontalScrollView {
             float expect = checkX + measuredWidth2 - measuredWidth + 2 * ivWidth + 4 * margin - getScrollX();
             if (expect > getWidth()) {
                 smoothScrollBy((int) (expect - getWidth()), 0);
+                /**
+                 * viewpager滑动时 选中在屏幕左端外范围
+                 */
             }else if(checkX<getScrollX()+ivWidth+4*margin+measuredWidth){
                 smoothScrollBy((int) (checkX-(getScrollX()+4*margin+measuredWidth)),0);
             }
@@ -213,6 +216,9 @@ public class DokiView extends HorizontalScrollView {
             Log.i("11", "doAnimator: " + (checkX - getScrollX() - ivWidth - 4 * margin));
             if (checkX - getScrollX() < ivWidth + 4 * margin) {
                 smoothScrollBy((int) (checkX - getScrollX() - ivWidth - 4 * margin), 0);
+                /**
+                 * viewpager滑动 选中在屏幕右端
+                 */
             }else if(checkX-getScrollX()>getWidth()-measuredWidth2-ivWidth - 4 * margin){
                 smoothScrollBy((int) (checkX - getScrollX() -getWidth()+measuredWidth2+ ivWidth + 4 * margin), 0);
             }
