@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         ViewPager vp = (ViewPager) findViewById(R.id.vp);
         DokiView dokiView = (DokiView) findViewById(R.id.dokiView);
         final List<String> list = new ArrayList<>(50);
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 12; i++) {
             list.add("小戏骨" + i);
         }
         dokiView.setAdapter(new DokiView.DokiAdapter<String>(list) {

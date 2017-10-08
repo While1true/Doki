@@ -1,5 +1,6 @@
 package com.example.ck.doki;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.widget.BaseAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TabWidget;
 import android.widget.TextView;
 
 import java.util.List;
@@ -58,7 +60,6 @@ public class DokiView extends HorizontalScrollView {
     }
 
     private void init() {
-
         margin = dp2px(getContext(), 2);
         ivWidth = dp2px(getContext(), 45);
         contentView = new LinearLayout(getContext());
@@ -82,7 +83,7 @@ public class DokiView extends HorizontalScrollView {
 
     /**
      * 排列方向
-     *
+     *待实现
      * @param orentation
      */
     private DokiView setOrentation(int orentation) {
@@ -145,7 +146,7 @@ public class DokiView extends HorizontalScrollView {
                              * 否则掉动画
                              */
                             if (viewPager != null) {
-                                viewPager.setCurrentItem(position,false);
+                                viewPager.setCurrentItem(position, false);
                             } else {
                                 doAnimator(checked, position);
                                 checked = position;
@@ -182,36 +183,42 @@ public class DokiView extends HorizontalScrollView {
         }
     }
 
-    private void doAnimator(int lastChecked, int position) {
+    private void doAnimator(final int lastChecked, final int position) {
         final ViewBean lastbean = getView(lastChecked);
         final ViewBean checkbean = getView(position);
         if (set != null)
             set.end();
         set = new AnimatorSet();
-        float checkX = checkbean.itemview.getX();
+        final float checkX = checkbean.itemview.getX();
         Log.i("sss", "doAnimator: " + checkX + "--" + getScrollX());
         checkbean.itemview.measure(0, 0);
-        int measuredWidth = lastbean.itemview.getMeasuredWidth();
-        int measuredWidth2 = checkbean.itemview.getMeasuredWidth();
-        ObjectAnimator animator = ObjectAnimator.ofInt(lastbean, "width", measuredWidth, ivWidth).setDuration(300);
-        ObjectAnimator animator2 = ObjectAnimator.ofInt(checkbean, "width", ivWidth, measuredWidth2).setDuration(300);
+        final int measuredWidth = lastbean.itemview.getMeasuredWidth();
+        final int measuredWidth2 = checkbean.itemview.getMeasuredWidth();
+        ObjectAnimator animator = ObjectAnimator.ofInt(lastbean, "width", measuredWidth, ivWidth).setDuration(200);
+        ObjectAnimator animator2 = ObjectAnimator.ofInt(checkbean, "width", ivWidth, measuredWidth2).setDuration(200);
         set.playTogether(animator, animator2);
         set.start();
+
         if (position > lastChecked) {
             /**
              * 右边点击时若还有item在屏幕外左移view
              */
-            float expect = checkX + measuredWidth2 - measuredWidth + 2 * ivWidth+4*margin - getScrollX();
-            if (expect > getWidth() - getPaddingLeft() - getPaddingRight()) {
+            float expect = checkX + measuredWidth2 - measuredWidth + 2 * ivWidth + 4 * margin - getScrollX();
+            if (expect > getWidth()) {
                 smoothScrollBy((int) (expect - getWidth()), 0);
+            }else if(checkX<getScrollX()+ivWidth+4*margin+measuredWidth){
+                smoothScrollBy((int) (checkX-(getScrollX()+4*margin+measuredWidth)),0);
             }
         } else {
-            Log.i("11", "doAnimator: " + (checkX - getScrollX() - ivWidth-4*margin));
-            if (checkX - getScrollX() < ivWidth+4*margin) {
-                smoothScrollBy((int) (checkX - getScrollX() - ivWidth-4*margin), 0);
+            Log.i("11", "doAnimator: " + (checkX - getScrollX() - ivWidth - 4 * margin));
+            if (checkX - getScrollX() < ivWidth + 4 * margin) {
+                smoothScrollBy((int) (checkX - getScrollX() - ivWidth - 4 * margin), 0);
+            }else if(checkX-getScrollX()>getWidth()-measuredWidth2-ivWidth - 4 * margin){
+                smoothScrollBy((int) (checkX - getScrollX() -getWidth()+measuredWidth2+ ivWidth + 4 * margin), 0);
             }
 
         }
+
     }
 
     private ViewBean getView(int position) {
@@ -307,7 +314,6 @@ public class DokiView extends HorizontalScrollView {
             itemview.setClipChildren(true);
             itemview.setOrientation(orentation);
             itemview.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-
 
             iv = new ImageView(viewGroup.getContext());
 
