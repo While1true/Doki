@@ -17,7 +17,6 @@ import android.widget.BaseAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TabWidget;
 import android.widget.TextView;
 
 import java.util.List;
@@ -134,7 +133,6 @@ public class DokiView extends HorizontalScrollView {
         contentView.setOrientation(orentation);
         for (int i = 0; i < adapter.getCount(); i++) {
             ViewBean viewBean = getView(i);
-            if (listener != null) {
                 final int position = i;
                 viewBean.itemview.setOnClickListener(new OnClickListener() {
                     @Override
@@ -151,10 +149,14 @@ public class DokiView extends HorizontalScrollView {
                                 doAnimator(checked, position);
                                 checked = position;
                             }
-                            listener.singleClick(position, v);
+                            if (listener != null) {
+                                listener.singleClick(position, v);
+                            }
                         } else {
                             if (System.currentTimeMillis() - lastclicktime < 600) {
-                                listener.doubleClick(position, v);
+                                if (listener != null) {
+                                    listener.doubleClick(position, v);
+                                }
                                 lastclicktime = 0;
                             } else {
                                 lastclicktime = System.currentTimeMillis();
@@ -162,7 +164,6 @@ public class DokiView extends HorizontalScrollView {
                         }
                     }
                 });
-            }
             ViewGroup.LayoutParams layoutParams = getView(i).itemview.getLayoutParams();
             Log.i("qqq", "Layout: " + (layoutParams == null));
             if (layoutParams == null) {
@@ -321,6 +322,7 @@ public class DokiView extends HorizontalScrollView {
             itemview.setOrientation(orentation);
             itemview.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
 
+            LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ivWidth,ivWidth);
             iv = new ImageView(viewGroup.getContext());
 
             tv = new TextView(viewGroup.getContext());
@@ -329,7 +331,7 @@ public class DokiView extends HorizontalScrollView {
             tv.getPaint().setFakeBoldText(true);
             tv.setSingleLine();
 
-            itemview.addView(iv);
+            itemview.addView(iv,params);
             itemview.addView(tv);
         }
     }
